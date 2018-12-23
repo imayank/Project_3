@@ -44,14 +44,13 @@ The goals / steps of this project are the following:
 
 #### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
 
-You're reading it! and here is a link to my [project code](https://github.com/imayank/Project_3/blob/master/Traffic_sign_classifier.ipynb)
+You're reading it! and here is a link to my [project notebook](https://github.com/imayank/Project_3/blob/master/Traffic_sign_classifier.ipynb)
 
 ### Data Set Summary & Exploration
 
 #### 1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
 
-I used the numpy library to calculate summary statistics of the traffic
-signs data set:
+I used the numpy library to calculate summary statistics of the traffic signs data set. The code can be found in the notebook cell titled **Basic Summary** 
 
 * The size of training set is 34799
 * The size of the validation set is 4410
@@ -61,7 +60,7 @@ signs data set:
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set.
+Here is an exploratory visualization of the data set. The respective code cells in the notebook are titled **Exploratory Data Analysis**.
 
 ##### Visualizing some random images from the training set
 
@@ -94,6 +93,8 @@ It can be seen in the plot presented below that number of training examples in d
 
 As first step of preprocessing, all the images were coverted to grayscale. The reason behind this was that no new information was being added by the color in the traffic sign image. Color was not the mazorly distinguishing among traffic signs. Also, some pictures that were taken in bad light conditions were appearing clearer when converted to grayscale. Secondly, converting to grayscale would meant faster training of the model.
 
+The respective code is contained in the notebook under the section titled **Grayscaling**
+
 Here is an example of a traffic sign images before and after grayscaling.
 
 ![alt text][image4]
@@ -103,13 +104,15 @@ Here is an example of a traffic sign images before and after grayscaling.
 
 ##### Image Data Augmentation
 
+The respective code is contained in the notebook under the section titled **Data Augmentation**
+
 As stated above some of the classes are under-represented in the training data and termed them as miniority classes of our training data. This under-representation might lead to poor model. The solution to the problem is generating additional data for these classes.
 
 The following steps were followed in selecting the classes for augmentation and augmenting the data:
 
 * All classes having size less than 800 were selected as minority classes for data augmentation. The mean of size of all classes is 809.27, the number 800 was chosen with respect to the mean value.
 
-* For data augmentation **ImageDataGenerator** is used.
+* For data augmentation **ImageDataGenerator** from **keras** is used.
   ```
   from keras.preprocessing.image import ImageDataGenerator
   datagen = ImageDataGenerator(
@@ -119,9 +122,10 @@ The following steps were followed in selecting the classes for augmentation and 
         shear_range=0.2,
         horizontal_flip=False,
         vertical_flip=False,
-        fill_mode='constant',
-        cval=0
+        featurewise_center=False,
+        featurewise_std_normalization=False
         )
+  ### This data generator randomly rotates or shifts or shears image in the provided range and generate the output image.
   ```
   This data generator is used to generate batches of randomly transformed images to augment the data in each of the minority class till the size of the class is at least 800.
   
@@ -136,6 +140,8 @@ The distribution of classes in the training set after augmentation step is prese
 
 ##### Image Normalization
 
+The respective code is contained in the notebook under the section titled **Normalization**
+
 As next step in image pre-processing, images were normalized to have zero mean and equal variance. The below formula is used for image normalization:
 
 ```
@@ -149,6 +155,8 @@ The nomalization step will make data center rougly around zero and in roughly eq
 
 ##### Shuffling
 
+The respective code is contained in the notebook under the section titled **Shuffliing**
+
 As last step in pre-processing the training data is shuffled.
 
 ```
@@ -160,6 +168,8 @@ X_train_shuffled, y_train_shuffled = shuffle(X_train_normalized, y_train)
 
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+
+The respective code is contained in the notebook under the section titled **Model Architecture**
 
 My final model consisted of the following layers:
 
@@ -201,6 +211,8 @@ Following setting was used for training the model:
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
+The respective code is contained in the notebook under the section titled **Train, Validate and Test the Model**
+
 My final model results were:
 * training set accuracy of 0.997
 * validation set accuracy of 0.967 
@@ -225,6 +237,8 @@ After the model architecture was chosen, and testing that it was working well di
 
 
 ### Test a Model on New Images
+
+The respective code is contained in the notebook under the section titled **Test a model on new Images**
 
 #### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
@@ -253,6 +267,8 @@ Here are the results of the prediction:
 The model was able to correctly guess 6 of the 6 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of 94.8%. As all the images were clear and bright I expected 100% accurate predictions on the new traffic sign images. It can also be concluded that if the real world images of traffic signs (taken from car cameras) are as clear as these the accuracy of the model will remain high, as in this case.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+
+The respective code is contained in the notebook under the section titled **Top Predictions**
 
 The Input images and top 5 predications with probabilities is presented in the image below:
 
