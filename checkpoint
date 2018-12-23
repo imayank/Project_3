@@ -1,2 +1,2 @@
-model_checkpoint_path: "lenet_aug3"
-all_model_checkpoint_paths: "lenet_aug3"
+model_checkpoint_path: "VGG"
+all_model_checkpoint_paths: "VGG"

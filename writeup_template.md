@@ -25,11 +25,14 @@ The goals / steps of this project are the following:
 [image6]: ./output_images/augmented.jpg "Augmented"
 [image7]: ./output_images/augmented_training_distribution.jpg "Augmented_distribution"
 [image8]: ./output_images/normalized.jpg "normalized"
-[image9]: ./output_images/transformed_21.jpg "Transform_0"
-[image10]: ./output_images/transformed_40.jpg "Transform_0"
-[image11]: ./output_images/transformed_41.jpg "Transform_0"
-[image12]: ./output_images/transformed_42.jpg "Transform_0"
-[image13]: ./output_images/transformed_33.jpg "Transform_0"
+[image9]: ./output_images/VGG.png "VGG-16"
+[image10]: ./new_signs/r1.jpg "New_image1"
+[image11]: ./new_signs/r2.jpg "New_image2"
+[image12]: ./new_signs/r3.jpg "New_image3"
+[image13]: ./new_signs/r4.jpg "New_image4"
+[image14]: ./new_signs/r5.jpg "New_image5"
+[image15]: ./new_signs/r6.jpg "New_image6"
+[image16]: ./output_images/top_predictions.jpg "Top_predictions"
 
 
 
@@ -110,7 +113,7 @@ The following steps were followed in selecting the classes for augmentation and 
   ```
   from keras.preprocessing.image import ImageDataGenerator
   datagen = ImageDataGenerator(
-        rotation_range=5,
+        rotation_range=15,
         width_shift_range=0.1,
         height_shift_range=0.1,
         shear_range=0.2,
@@ -163,24 +166,23 @@ My final model consisted of the following layers:
 | Layer                    |     Description                               | 
 |:------------------------:|:---------------------------------------------:| 
 | Input                    | 32x32x3 RGB image                             | 
-| layer_1: Convolution 5x5 | 1x1 stride, VALID padding, outputs 28x28x6    |
+| layer_1: Convolution 3x3 | 1x1 stride, SAME padding, outputs 32x32x64    |
 | layer_1: ReLU            | Activation Layer                              |
-| layer_1: Max pooling 2x2 | 2x2 stride,  outputs 14x14x6                  |
-| layer_2: Convolution 5x5 | 1x1 stride, VALID padding, outputs 10x10x16   |
+| layer_1: Max pooling 2x2 | 2x2 stride,  outputs 16x16x64                 |
+| layer_2: Convolution 3x3 | 1x1 stride, SAME padding, outputs 16x16x128   |
 | layer_2: ReLU            | Activation Layer                              |
-| layer_2: Max pooling 2x2 | 2x2 stride, outputs 5x5x16                    |
-| layer_3: Convolution 5x5 | 1x1 stride, VALID padding, outputs 1x1x400    |
+| layer_2: Max pooling 2x2 | 2x2 stride, outputs 8x8x128                   |
+| layer_3: Convolution 3x3 | 1x1 stride, SAME padding, outputs 8x8x256     |
 | layer_3: ReLU            | Activation Layer                              |
-| flatten_layer_2: FLATTEN | Flattening output of layer_2, 5x5x16 -> 400   |
-| flatten_layer_3: FLATTEN | Flattening output of layer_3, 1x1x400 -> 400  |
-| concat: CONCAT           | concatenate flatten_layer_2 & flatten_layer_3, (400,400) -> 800 |
-| concat: DROPOUT          | Dropout layer                                 |
-| layer_4: FULLY CONNECTED | Fully connected layer of size 120, outputs 120x1 |
+| layer_3: Max pooling 2x2 | 2x2 stride, outputs 4x4x256                   |
+| layer_4: Convolution 3x3 | 1x1 stride, SAME padding, outputs 4x4x512     |
 | layer_4: ReLU            | Activation Layer                              |
-| layer_4: DROPOUT         | Dropout layer                                 |   
-| layer_5: FULLY CONNECTED | Fully connected layer of size 84, outputs 84x1|
+| layer_4: Max pooling 2x2 | 2x2 stride, outputs 2x2x512                   |
+| flatten_layer: FLATTEN   | Flattening output of layer_4, 2x2x512 -> 2048 |
+| flatten_layer: DROPOUT   | Dropout layer                                 | 
+| layer_5: FULLY CONNECTED | Fully connected layer of size 1024, outputs 1024x1 |
 | layer_5: ReLU            | Activation Layer                              |
-| layer_5: DROPOUT         | Dropout layer                                 |
+| layer_5: DROPOUT         | Dropout layer                                 |   
 | logits: FULLY CONNECTED  | Fully connected layer of size 43, outputs 43x1|
  
 
@@ -192,73 +194,67 @@ Following setting was used for training the model:
 * **Optimizer:** Adam Optimizer
 * **Learning Rate:** 0.001
 * **Loss Functiom:** Cross entropy
-* **EPOCHS:** 50
-* **keep probability(keep_prob):** When training: 0.7
+* **EPOCHS:** 15
+* **keep probability(keep_prob):** When training: 0.5
 * **BATCH SIZE:** 128
 * **tf.truncated_normal():** mean = 0, and standard deviation = 0.1 
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 0.997
+* validation set accuracy of 0.967 
+* test set accuracy of 0.948
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+The architecture of the model is based on one of the popular CNN architecture VGG-16. VGG-16 is a neural network architecture that performed really well in 2014's Imagenet competition. Because it performed so well on Imagenet database, I thought that an architecture based on VGG-16 might perform well for a task like traffic sign classifiction also. The second reason to base my model on VGG-16 was its simplicity.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+VGG-16 uses 224x224 RGB image as input, and keep reducing its height and width while increasing the depth till it obtains a feature stack of shape 7x7x512. Which is followed by 2 fully  connected layer and finally a softmax layer. It is shown in the image below:
+
+![alt text][image9]
+
+
+Because the size of the traffic sign images is 32x32x1, the architecture for classifying traffix signs cannot be as deep as original VGG-16. So, I have made following changes to the original architecture:
+
+1. In the  VGG-16 architecture there are two convolutional layers followed by a max pooloing layer. In the present architecture only one convolutional layer was created followed by a max pooling layer.
+
+1. The last set of convolutional+convolutional+maxpool layer is removed in present architecture.
+
+1. Dropout layers were added so as the model does not gets overfitted over the training data.
+
+After the model architecture was chosen, and testing that it was working well different combinations of *keep_prob* , *learning_rate* and *EPOCHS* were tried. The best parameters were chosen that have been already reported above.
+
 
 ### Test a Model on New Images
 
 #### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+Here are German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image10] ![alt text][image11] ![alt text][image12] 
+![alt text][image13] ![alt text][image14] ![alt text][image15]
 
-The first image might be difficult to classify because ...
+The images I found on the web are vbright and clear, and there is nothing that should make classifying them difficult. The new images I found are more distinguishable than the images in the training set. That's why I expect all of them to be classified with high confidence. 
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Image                                 |     Prediction                                | 
+|:-------------------------------------:|:---------------------------------------------:| 
+| Right-of-way at the next intersection | Right-of-way at the next intersection         | 
+| Speed limit (60km/h)                  | Speed limit (60km/h)                          |
+| No passing                            | No passing                                    |
+| Traffic signals                       | Traffic signals                               |
+| Keep right                            | Keep right                                    |
+| Road work                             | Road work                                     |
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+
+The model was able to correctly guess 6 of the 6 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of 94.8%. As all the images were clear and bright I expected 100% accurate predictions on the new traffic sign images. It can also be concluded that if the real world images of traffic signs (taken from car cameras) are as clear as these the accuracy of the model will remain high, as in this case.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The Input images and top 5 predications with probabilities is presented in the image below:
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
-
-
-For the second image ... 
-
-
+![alt text][image16]
 
